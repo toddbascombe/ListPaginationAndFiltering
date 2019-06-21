@@ -11,9 +11,7 @@ function showPage(list, page) {
   const endIndex = page * itemsPerPage;
   for (let i = 0; i < list.length; i++) {
     if (i >= startIndex && i < endIndex) {
-      list.style.display = "block";
-    } else {
-      list.style.display = "none";
+      document.querySelector("student-list").appendChild(list[i]);
     }
   }
 }
@@ -37,9 +35,9 @@ function appendPageLinks(list) {
   for (let i = 1; i <= numberOfPages; i++) {
     ul.appendChild(li);
     a.value = i;
-    //if (i == 1) {
-    //a.className = "active";
-    //}
+    if (i == 1) {
+      a.className = "active";
+    }
     li.appendChild(a);
   }
   a.addEventListener("click", e => {
@@ -48,9 +46,15 @@ function appendPageLinks(list) {
         a[j].classList.remove("active");
       }
     }
-    e.target.className = "active";
-    showPage(list, e.target.value);
+    if (e.target) {
+      e.target.className = "active";
+      showPage(list, e.target.value);
+    }
   });
+}
+
+for (i = 0; i < list.length; i++) {
+  list[i].style.display = "none";
 }
 appendPageLinks(list);
 
