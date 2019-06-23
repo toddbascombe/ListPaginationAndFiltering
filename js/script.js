@@ -11,7 +11,9 @@ function showPage(list, page) {
   const endIndex = page * itemsPerPage;
   for (let i = 0; i < list.length; i++) {
     if (i >= startIndex && i < endIndex) {
-      document.querySelector("student-list").appendChild(list[i]);
+      list[i].style.display = "block";
+    } else {
+      list[i].style.display = "none";
     }
   }
 }
@@ -23,41 +25,33 @@ function appendPageLinks(list) {
     }
     return list.length / 10;
   };
-  const numberOfPages = totalPages;
+  const numberOfPages = totalPages();
   const div = document.createElement("div");
   const ul = document.createElement("ul");
-  const li = document.createElement("li");
-  const a = document.createElement("a");
-  a.href = "#";
+
   div.className = "pagination";
   document.querySelector(".page").appendChild(div);
   div.appendChild(ul);
   for (let i = 1; i <= numberOfPages; i++) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = "#";
     ul.appendChild(li);
-    a.value = i;
-    if (i == 1) {
-      a.className = "active";
-    }
+    a.textContent = i;
     li.appendChild(a);
-  }
-  a.addEventListener("click", e => {
-    for (let j = 0; j < a.length; j++) {
-      if (a[j].className === "active") {
-        a[j].classList.remove("active");
+    a.addEventListener("click", e => {
+      if (e.target.textContent) {
+        e.target.className = "active";
+        showPage(list, e.target.textContent);
       }
+    });
+    if (i === 1) {
+      showPage(list, i);
     }
-    if (e.target) {
-      e.target.className = "active";
-      showPage(list, e.target.value);
-    }
-  });
+  }
 }
 
-for (i = 0; i < list.length; i++) {
-  list[i].style.display = "none";
-}
 appendPageLinks(list);
-
 /*** 
    Add your global variables that store the DOM elements you will 
    need to reference and/or manipulate. 
