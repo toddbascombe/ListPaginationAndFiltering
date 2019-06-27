@@ -19,35 +19,53 @@ function showPage(list, page) {
 }
 
 function appendPageLinks(list) {
+  const searchInput = document.createElement("input");
+  const searchButton = document.createElement("button");
+  searchButton.type = "submit";
+  searchButton.className = "student-search";
+  searchButton.textContent = "Search";
+  searchInput.className = "student-search";
+  searchInput.type = "search";
+  searchInput.name = "searchInput";
+  document.querySelector(".page-header").appendChild(searchInput);
+  document.querySelector(".page-header").appendChild(searchButton);
+
   const createElement = element => {
     const tag = document.createElement(element);
     return tag;
   };
-  const totalPages = () => {
+
+  const totalPages = list => {
     if (list.length % itemsPerPage > 0) {
       return list.length / itemsPerPage + 1;
     }
     return list.length / itemsPerPage;
   };
 
-  const numberOfPages = totalPages();
+  const numberOfPages = totalPages(list);
   const div = createElement("div");
   const ul = createElement("ul");
 
   div.className = "pagination";
   document.querySelector(".page").appendChild(div);
   div.appendChild(ul);
-  for (let i = 1; i <= numberOfPages; i++) {
-    const li = createElement("li");
-    const a = createElement("a");
-    a.href = "#";
-    ul.appendChild(li);
-    a.textContent = i;
-    li.appendChild(a);
-    if (i === 1) {
-      showPage(list, i);
+
+  function pageNumbers(page) {
+    for (let i = 1; i <= numberOfPages; i++) {
+      const li = createElement("li");
+      const a = createElement("a");
+      a.href = "#";
+      ul.appendChild(li);
+      a.textContent = i;
+      li.appendChild(a);
+      if (i === 1) {
+        showPage(list, i);
+      }
     }
   }
+
+  pageNumbers(numberOfPages);
+
   ul.addEventListener("click", e => {
     e.preventDefault();
     const a = document.querySelectorAll("a");
@@ -59,5 +77,33 @@ function appendPageLinks(list) {
       }
     }
   });
+
+  function searchList(searchInput, list) {
+    let filter = searchInput.value.toLowerCase();
+    for (let i = 0; i < list.length; i++) {
+      list[i].classList.remove("match");
+      let h3 = list[i].getElementsByTagName("h3")[0];
+      let name = h3.textContent;
+      if (name.toLowerCase().indexOf(filter) > -1) {
+        list[i].style.display = "";
+      } else {
+        list[i].style.display = "none";
+      }
+    }
+  }
+
+  searchInput.addEventListener("keyup", () => {
+    if (searchInput.value.length <= 0) {
+      showPage(list, 1);
+    } else {
+      searchList(searchInput, list);
+    }
+  });
+
+  searchButton.addEventListener("click", event => {
+    event.preventDefault();
+    searchList(list, searchInput);
+  });
 }
+
 appendPageLinks(list);
